@@ -1,7 +1,10 @@
 import json, jwt
+import resource
 from flask import Blueprint, request, jsonify, current_app, Response
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
+
+from zmq import SecurityMechanism
 from auth_middleware import token_required
 
 from model.users import User
@@ -132,4 +135,3 @@ class UserAPI:
     # building RESTapi endpoint
     api.add_resource(_CRUD, '/')
     api.add_resource(_Security, '/authenticate')
-    
