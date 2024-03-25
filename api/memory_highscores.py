@@ -1,26 +1,31 @@
-# api/memory_highscores.py
+import json
 from flask import Blueprint, request, jsonify
-from model.highscores import MemoryHighScore, db
+from flask_restful import Api, Resource
 
-memory_highscores_api = Blueprint('memory_highscores_api', __name__, url_prefix='/api/memory_highscores')
+score_api = Blueprint('score_api', __name__, url_prefix='/api/scores')
+api = Api(score_api)
 
-@memory_highscores_api.route('/', methods=['POST'])
-def submit_memory_highscore():
-    data = request.get_json()
-    username = data.get('username')
-    completion_time = data.get('completion_time')
+class HighscoreAPI:
+    class _CRUD(Resource):
+        def post(self):
+            body = request.get_json()
+            user_time = body.get('user_time')
+            if not user_time or not isinstance(user_time, int):
+                return {'message': 'Invalid user time. Please provide a valid integer.'}, 400
+            
+            if 1 <= user_time <= 10:
+                return {'message': 'Amazing!'}, 200
+            elif 11 <= user_time <= 20:
+                return {'message': 'Very Good!'}, 200
+            elif 21 <= user_time <= 30:
+                return {'message': 'OK.'}, 200
+            elif 31 <= user_time <= 40:
+                return {'message': 'Good.'}, 200
+            elif 41 <= user_time <= 50:
+                return {'message': 'Improving.'}, 200
+            elif 51 <= user_time <= 60:
+                return {'message': 'Need Improvement.'}, 200
+            else:
+                return {'message': 'Your time is beyond the expected range.'}, 200
 
-    if not username or not completion_time:
-        return jsonify({'message': 'Username or completion time is missing'}), 400
-
-    highscore_entry = MemoryHighScore(username=username, completion_time=completion_time)
-    db.session.add(highscore_entry)
-    db.session.commit()
-
-    return jsonify({'message': 'High score submitted successfully'}), 201
-
-@memory_highscores_api.route('/', methods=['GET'])
-def get_top_memory_highscores():
-    top_highscores = MemoryHighScore.query.order_by(MemoryHighScore.completion_time).limit(10).all()
-    highscores_data = [score.to_dict() for score in top_highscores]
-    return jsonify(highscores_data)
+    api.add_resource(_CRUD, '/')
