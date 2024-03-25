@@ -1,20 +1,18 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from api.time_api import time_api
+from model.highscores import db
+from api.memory_highscores import memory_highscores_api
 
-# Create Flask app
 app = Flask(__name__)
 
 # Configure database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fastest_times.db'  # Example SQLite URI
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///highscores.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy instance
-db = SQLAlchemy(app)
+db.init_app(app)
 
-# Register time API Blueprint
-app.register_blueprint(time_api)
+# Register API blueprints
+app.register_blueprint(memory_highscores_api)
 
-# Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
