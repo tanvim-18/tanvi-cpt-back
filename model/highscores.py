@@ -22,11 +22,13 @@ class Highscore(db.Model):
 
     @property
     def score(self):
-        return self.score
+        return self._score
 
     @score.setter
     def score(self, score):
-        self.score = score
+        self._score = score
+
+
 
     def __repr__(self):
         return f"Highscore({self.user_time}, '{self.score}')"
