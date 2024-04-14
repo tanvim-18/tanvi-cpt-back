@@ -1,6 +1,6 @@
 from flask import Flask
 from model.highscores import db
-from api.memory_highscores import memory_highscores_api
+from api.scores import memory_highscores_api
 
 app = Flask(__name__)
 

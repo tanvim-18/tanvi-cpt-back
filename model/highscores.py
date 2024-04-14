@@ -32,8 +32,8 @@ class Highscore(db.Model):
         return f"Highscore({self.user_time}, '{self.score}')"
 
     def create(self):
-        db.session.add(self)
-        db.session.commit()
+        with db.session.begin_nested():
+            db.session.add(self)
         return self
 
     def read(self):
@@ -55,12 +55,16 @@ class Highscore(db.Model):
         db.session.commit()
         return None
 
-# Read data from highscores.json and insert into the database
-with open('highscores.json', 'r') as json_file:
-    highscores_data = json.load(json_file)
+# This part should be wrapped inside a Flask application context
+from __init__ import app  # Assuming `app` is your Flask application instance
 
-for data in highscores_data:
-    user_time = data["user_time"]
-    score = data["score"]
-    highscore = Highscore(user_time=user_time, score=score)
-    highscore.create()
+with app.app_context():
+    # Read data from highscores.json and insert into the database
+    with open('highscores.json', 'r') as json_file:
+        highscores_data = json.load(json_file)
+
+    for data in highscores_data:
+        user_time = data["user_time"]
+        score = data["score"]
+        highscore = Highscore(user_time=user_time, score=score)
+        highscore.create()
