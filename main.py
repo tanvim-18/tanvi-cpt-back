@@ -1,44 +1,29 @@
-from flask import Flask, render_template, request
-from flask_cors import CORS
-from flask.cli import AppGroup
-from model.users import initUsers
-from model.players import initPlayers
-from model.highscores import db
-from api.highscores import memory_highscores_api
+from flask import Flask
+from model import db
+from model.scores import Highscore
+import json
 
 app = Flask(__name__)
-
-# Enable CORS
-CORS(app)
 
 # Configure database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///highscores.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize SQLAlchemy
+# Initialize SQLAlchemy instance
 db.init_app(app)
 
-# Register API blueprint
-app.register_blueprint(memory_highscores_api)
+# Create the database tables
+with app.app_context():
+    db.create_all()
 
-@app.route('/')
-def index():
-    return render_template("index.html")
+    # Read data from highscores.json and insert into the database
+    with open('highscores.json', 'r') as json_file:
+        highscores_data = json.load(json_file)
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
+    for data in highscores_data:
+        user_time = data["user_time"]
+        score = data["score"]
+        highscore = Highscore(user_time=user_time, score=score)
+        db.session.add(highscore)
 
-# Define a command to generate data
-custom_cli = AppGroup('custom', help='Custom commands')
-
-@custom_cli.command('generate_data')
-def generate_data():
-    initUsers()
-    initPlayers()
-
-# Register the custom command group
-app.cli.add_command(custom_cli)
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    db.session.commit()
