@@ -1,8 +1,12 @@
-import json, jwt
-from flask import Blueprint, request, jsonify, current_app, Response
-from flask_restful import Api, Resource # used for REST API building
+import json
+from flask import Blueprint, request, jsonify
+from flask_restful import Api, Resource
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 #from auth_middleware import token_required
+
+# Create a SQLAlchemy object
+db = SQLAlchemy()
 
 from model.scores import Score
 
