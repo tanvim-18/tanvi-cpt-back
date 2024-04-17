@@ -8,6 +8,9 @@ from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy()
+from model import db
 
 ''' Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along '''
 
