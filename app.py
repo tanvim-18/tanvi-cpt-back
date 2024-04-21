@@ -1,6 +1,6 @@
 from flask import Flask
-from model.scores import db
-from api.scores import memory_highscores_api
+from model.scorey import db
+from api.score import score_api
 
 app = Flask(__name__)
 
@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 # Register API blueprints
-app.register_blueprint(memory_highscores_api)
+app.register_blueprint(score_api)
 
 if __name__ == '__main__':
     app.run(debug=True)
