@@ -5,7 +5,7 @@ from api.score import score_api
 app = Flask(__name__)
 
 # Configure database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///highscores.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///scores.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy instance
