@@ -10,18 +10,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class Score(db.Model):
     __tablename__ = 'score'
-    _id = db.Column(db.Integer, primary_key=True)
-    _name = db.Column(db.String(255), nullable=False)
-    _user_time = db.Column(db.Float, nullable=False)
-    _feedback = db.Column(db.Float, nullable=False)
+    #_id = db.Column(db.Integer, primary_key=True)
+    #_name = db.Column(db.String(255), nullable=False)
+    _user_time = db.Column(db.Float, nullable=False, primary_key=True)
+    _feedback = db.Column(db.String(255), nullable=False)
 
 
-    def __init__(self, id, name, user_time, feedback):
-        self._id = id
-        self._name = name
+    def __init__(self, user_time, feedback):
+        #self._id = id
+        #self._name = name
         self._user_time = user_time
         self._feedback = feedback
 
+    """
     @property
     def id(self):
         return self._id
@@ -29,7 +30,8 @@ class Score(db.Model):
     @property
     def name(self):
         return self._name
-    
+    """
+
     @property
     def user_time(self):
         return self._user_time
@@ -40,13 +42,39 @@ class Score(db.Model):
 
     def serialize(self):
         return {
-            "id": self._id, 
-            "name": self._name,
+            #"id": self._id, 
+            #"name": self._name,
             "user_time": self._user_time,
             "feedback": self._feedback,
         }
+    
 
-    def save(self):
+    def create(self):
+        try:
+            # creates a person object from User(db.Model) class, passes initializers
+            db.session.add(self)  # add prepares to persist person object to Users table
+            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
+            return self
+        except IntegrityError:
+            db.session.remove()
+            return None
+        
+def read(self):
+        return {
+            #"id": self.id,
+          #  "name": self.name,
+            "user_time": self.user_time,
+            "feedback": self.feedback,
+            # "posts": [post.read() for post in self.posts]
+        }
+
+def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return None
+
+    
+def save(self):
         try:
             db.session.add(self)
             db.session.commit()
@@ -69,7 +97,11 @@ def initScorey():
 
         for item in data:
             # print(item)
-             s_toadd = Score(user_time=item['user_time'], feedback=item['feedback'])
+             s_toadd = Score(
+                 #id = item['id'],
+                 #name = item['name'],
+                 user_time=item['user_time'], 
+                 feedback=item['feedback'])
              scorestoadd.append(s_toadd)
             
         """Builds sample user/note(s) data"""
@@ -79,6 +111,4 @@ def initScorey():
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
-                print(f"Records exist, duplicate email, or error: {d.drinkstoadd}")
-            
-initScorey()
+                print(f"Records exist, duplicate email, or error: {s.scorestoadd}")
