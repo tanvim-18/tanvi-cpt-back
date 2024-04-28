@@ -15,9 +15,9 @@ class ScoreAPI:
         #@token_required
         def post(self, current_user):
             body = request.get_json()
-            name = body.get('name')
-            if name is None or len(name) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 400
+            user_time = body.get('user_time')
+            if user_time is None or len(user_time) < 1:
+                return {'message': f'Time is missing, or is less than 1 characters'}, 400
             
             # Adjustments for score data
             id = body.get('id')

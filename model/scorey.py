@@ -10,27 +10,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class Score(db.Model):
     __tablename__ = 'score'
-    #_id = db.Column(db.Integer, primary_key=True)
-    #_name = db.Column(db.String(255), nullable=False)
     _user_time = db.Column(db.Float, nullable=False, primary_key=True)
     _feedback = db.Column(db.String(255), nullable=False)
 
 
     def __init__(self, user_time, feedback):
-        #self._id = id
-        #self._name = name
         self._user_time = user_time
         self._feedback = feedback
-
-    """
-    @property
-    def id(self):
-        return self._id
-    
-    @property
-    def name(self):
-        return self._name
-    """
 
     @property
     def user_time(self):
@@ -42,8 +28,6 @@ class Score(db.Model):
 
     def serialize(self):
         return {
-            #"id": self._id, 
-            #"name": self._name,
             "user_time": self._user_time,
             "feedback": self._feedback,
         }
@@ -61,8 +45,6 @@ class Score(db.Model):
         
 def read(self):
         return {
-            #"id": self.id,
-          #  "name": self.name,
             "user_time": self.user_time,
             "feedback": self.feedback,
             # "posts": [post.read() for post in self.posts]
@@ -88,7 +70,7 @@ def initScorey():
         db.create_all()
         # Add initialization data if needed
         
-        scorestoadd = []
+        toadd = []
         try:
             with open(r'scores.json','r') as json_file:
                 data = json.load(json_file)
@@ -98,17 +80,15 @@ def initScorey():
         for item in data:
             # print(item)
              s_toadd = Score(
-                 #id = item['id'],
-                 #name = item['name'],
                  user_time=item['user_time'], 
                  feedback=item['feedback'])
-             scorestoadd.append(s_toadd)
+             toadd.append(s_toadd)
             
         """Builds sample user/note(s) data"""
-        for s in scorestoadd:
+        for s in toadd:
             try:
                 s.create()
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
-                print(f"Records exist, duplicate email, or error: {s.scorestoadd}")
+                print(f"Records exist, duplicate email, or error: {s.toadd}")
